@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Brad's Journal">
+<title>Brad's Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FAF7F2;--ink:#2A1F14;--ink-light:#7A6050;--ink-faint:#B09070;--rule:#E8DFD0;--rule-light:#F0E8DC;--gold:#C4873A;--green:#4A7C4A;--violet:#7C6AAF}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--paper);font-family:'Lora',Georgia,serif;color:var(--ink)}
+.header{background:var(--paper);border-bottom:1px solid var(--rule);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-date{font-size:10px;letter-spacing:3px;color:var(--ink-faint);text-transform:uppercase;margin-bottom:3px}
+.header-title{font-size:20px;font-style:italic}
+.dots{display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:#DDD;transition:background 0.4s}
+.dot.done-morning{background:var(--gold)}.dot.done-midday{background:var(--green)}.dot.done-evening{background:var(--violet)}
+.dot-count{font-size:10px;color:var(--ink-faint);margin-left:4px}
+.hbtn{background:transparent;border:1px solid #D4C4B0;color:#8A7060;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-family:'Lora',serif}
+.main{max-width:560px;margin:0 auto;padding:24px 18px 80px}
+.tabs{display:flex;border-bottom:1px solid var(--rule);margin-bottom:28px}
+.tab-btn{flex:1;padding:12px 8px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:'Lora',serif;color:var(--ink-faint);display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:-1px;transition:all 0.2s}
+.tab-btn.active-morning{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-btn.active-midday{color:var(--green);border-bottom-color:var(--green)}
+.tab-btn.active-evening{color:var(--violet);border-bottom-color:var(--violet)}
+.coach-quote{border-left:2px solid var(--gold);padding-left:16px;margin-bottom:28px;font-size:16px;font-style:italic;line-height:1.7}
+.coach-quote.midday{border-color:var(--green)}.coach-quote.evening{border-color:var(--violet)}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.section-label{font-size:16px;font-style:italic}.section-sub{font-size:10px;color:var(--ink-faint);letter-spacing:2px;text-transform:uppercase}
+.qcard{background:#FFFCF8;border:1px solid #EAE0D0;border-radius:8px;padding:18px 20px;margin-bottom:16px;position:relative;animation:fadeUp 0.3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.qcard-num{position:absolute;top:14px;right:16px;font-size:10px;color:#D4C4B0}
+.qlabel{font-size:14px;color:#4A3828;margin-bottom:14px;line-height:1.5;padding-right:32px}
+.qlabel-opt{color:var(--ink-faint);font-size:11px;margin-left:8px;font-style:italic}
+.num-wrap{display:flex;align-items:baseline;gap:10px}
+.num-input{background:transparent;border:none;border-bottom:1.5px solid #D4C4B0;color:var(--ink);font-size:28px;font-style:italic;width:130px;outline:none;font-family:'Lora',serif;padding:4px 0;transition:border-color 0.2s}
+.num-unit{font-size:12px;color:var(--ink-faint);font-style:italic}
+.text-input{background:transparent;border:none;border-bottom:1.5px solid #D4C4B0;color:var(--ink);font-size:15px;font-style:italic;width:100%;outline:none;font-family:'Lora',serif;padding:6px 0}
+.text-input::placeholder{color:#C4B09A}
+.slider-val{font-size:30px;font-style:italic;margin-bottom:8px;min-height:38px}
+.slider-val .denom{font-size:13px;color:var(--ink-faint);margin-left:4px}
+.slider-val .empty{color:#D4C4B0}
+input[type=range]{width:100%;cursor:pointer;-webkit-appearance:none;height:3px;border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
+.slider-labels{display:flex;justify-content:space-between;margin-top:6px}
+.slider-labels span{font-size:10px;color:var(--ink-faint);font-style:italic}
+.bool-wrap{display:flex;gap:10px}
+.bool-btn{padding:8px 28px;border:1px solid #D4C4B0;background:transparent;color:var(--ink-faint);cursor:pointer;border-radius:4px;font-size:13px;font-family:'Lora',serif;font-style:italic;transition:all 0.15s}
+.submit-btn{margin-top:32px;width:100%;padding:15px;border:none;border-radius:6px;color:#FFF;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'Lora',serif;font-style:italic}
+.submitted-box{background:#FFFCF8;border-radius:8px;padding:28px 24px;margin-bottom:24px;text-align:center}
+.submitted-check{font-size:30px;margin-bottom:14px}
+.submitted-msg{font-size:16px;font-style:italic;line-height:1.7}
+.logged-header{font-size:10px;letter-spacing:2px;color:var(--ink-faint);text-transform:uppercase;margin-bottom:12px}
+.log-row{display:flex;justify-content:space-between;border-bottom:1px solid var(--rule-light);padding:8px 0}
+.log-key{font-size:12px;color:var(--ink-faint);font-style:italic}.log-val{font-size:13px;color:#4A3828}
+.edit-btn{margin-top:16px;width:100%;padding:10px;background:transparent;border:1px solid #D4C4B0;color:var(--ink-faint);border-radius:4px;cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:'Lora',serif}
+.history-wrap{max-width:560px;margin:0 auto;padding:24px 18px 60px}
+.history-header{font-size:10px;letter-spacing:3px;color:var(--ink-faint);text-transform:uppercase;margin-bottom:24px}
+.history-day{margin-bottom:32px}
+.history-date{font-size:13px;font-style:italic;color:var(--ink-light);margin-bottom:12px;border-bottom:1px solid var(--rule);padding-bottom:8px}
+.history-entry{background:#FFFCF8;border:1px solid #EAE0D0;border-radius:6px;padding:12px 16px;margin-bottom:10px}
+.history-entry-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.history-entry-pts{font-size:13px;font-style:italic;color:var(--ink-light);line-height:1.7}
+.empty-history{text-align:center;padding:60px 20px;color:var(--ink-faint);font-style:italic}
+.install-bar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:#FAF7F2;padding:14px 20px;font-size:13px;font-style:italic;display:flex;align-items:center;justify-content:space-between;z-index:200}
+.install-bar button{background:transparent;border:1px solid rgba(250,247,242,0.2);color:#FAF7F2;padding:5px 12px;border-radius:4px;cursor:pointer;font-family:'Lora',serif;font-size:12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const NAME="Brad";
+const COACH={
+  morning:["Morning, Brad. Let's see where you're starting from.","New day. Fresh slate. Let's check in.","The day starts here. Be honest with yourself."],
+  midday:["Halfway there, Brad. How's it actually going?","Mid-day check. No filter — just where things are at.","You're in the middle of it. Let's take stock."],
+  evening:["Day's done, Brad. Time to close it out right.","This is the moment of truth. How did today go?","End of day. Be honest. That's how we get better."],
+  submitted_morning:["Good. You showed up for yourself. Now go make it count.","That's the foundation. Build on it today.","Logged. Now go be the person you're trying to become."],
+  submitted_midday:["Good. Stay the course. The day isn't over.","Logged. Finish strong, Brad.","You checked in. Now execute the back half."],
+  submitted_evening:["Day logged. One more day of showing up.","Done. Rest well. Tomorrow you go again.","Logged. You did the work of tracking. That matters."]
+};
+function rand(a){return a[Math.floor(Math.random()*a.length)]}
+const CHECKS={
+  morning:{label:"Morning",time:"Wake-Up",color:"#C4873A",qs:[
+    {id:"sleep_hours",label:"How many hours did you sleep?",type:"number",unit:"hrs",step:0.5,max:24},
+    {id:"sleep_quality",label:"Sleep quality",type:"slider",lo:"Terrible",hi:"Deep & restorative"},
+    {id:"weight",label:"Morning weight",type:"number",unit:"lbs",step:0.1,max:500,optional:true},
+    {id:"mood_morning",label:"Mood right now",type:"slider",lo:"Dark",hi:"Solid"},
+    {id:"energy_morning",label:"Energy level",type:"slider",lo:"Dragging",hi:"Ready"},
+    {id:"todays_intention",label:"One word for today",type:"text",ph:"Focus. Discipline. Rest. Presence..."}
+  ]},
+  midday:{label:"Midday",time:"Check-In",color:"#4A7C4A",qs:[
+    {id:"calories_so_far",label:"Calories consumed so far",type:"number",unit:"kcal",max:6000},
+    {id:"protein_so_far",label:"Protein so far",type:"number",unit:"g",max:500,optional:true},
+    {id:"water_so_far",label:"Water so far",type:"number",unit:"cups",step:0.5,max:20},
+    {id:"exercise_done",label:"Exercised yet today?",type:"bool"},
+    {id:"exercise_details",label:"What did you do?",type:"text",ph:"30min walk, 45min weights...",cond:"exercise_done"},
+    {id:"work_output_midday",label:"Work output quality so far",type:"slider",lo:"Scattered",hi:"Locked in"},
+    {id:"stress_midday",label:"Stress level right now",type:"slider",lo:"Clear",hi:"Overwhelmed"}
+  ]},
+  evening:{label:"Evening",time:"Wrap-Up",color:"#7C6AAF",qs:[
+    {id:"total_calories",label:"Total calories today",type:"number",unit:"kcal",max:8000},
+    {id:"total_protein",label:"Total protein",type:"number",unit:"g",max:500,optional:true},
+    {id:"total_carbs",label:"Total carbs",type:"number",unit:"g",max:1000,optional:true},
+    {id:"total_fat",label:"Total fat",type:"number",unit:"g",max:500,optional:true},
+    {id:"total_water",label:"Total water today",type:"number",unit:"cups",step:0.5,max:25},
+    {id:"exercise_complete",label:"Did you exercise today?",type:"bool"},
+    {id:"exercise_full",label:"Describe the workout",type:"text",ph:"45min weights + 20min cardio...",cond:"exercise_complete"},
+    {id:"work_output_day",label:"Work output — full day",type:"slider",lo:"Off day",hi:"Best work"},
+    {id:"mood_evening",label:"How do you feel right now?",type:"slider",lo:"Low",hi:"Good"},
+    {id:"stress_day",label:"Overall stress today",type:"slider",lo:"Handled it",hi:"Rough"},
+    {id:"wins",label:"One win from today — big or small",type:"text",ph:"What did you actually do well?"},
+    {id:"tomorrow_focus",label:"What does tomorrow need from you?",type:"text",ph:"One thing that matters most."}
+  ]}
+};
+const ICONS={
+  morning:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`,
+  midday:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 8C8 10 5.9 16.17 3.82 19.84M17 8c0 0 2 6-6 8M17 8C17 8 21 3 21 3c0 0-8 1-12 7"/></svg>`,
+  evening:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
+};
+let state={
+  tab:getTimeOfDay(),mode:"checkin",answers:{},
+  submitted:{morning:false,midday:false,evening:false},
+  submittedMsgs:{},
+  coachMsgs:{morning:rand(COACH.morning),midday:rand(COACH.midday),evening:rand(COACH.evening)},
+  history:[],
+  showInstall:!localStorage.getItem("brad_install_dismissed")&&isIOS()
+};
+function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent)}
+function isStandalone(){return window.navigator.standalone}
+function getTodayKey(){return new Date().toISOString().split("T")[0]}
+function getTimeOfDay(){const h=new Date().getHours();return h<11?"morning":h<17?"midday":"evening"}
+function formatDate(s){return new Date(s+"T12:00:00").toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}
+function skey(tab){return`brad_v3_${getTodayKey()}_${tab}`}
+function loadTab(tab){
+  try{
+    const raw=localStorage.getItem(skey(tab));
+    if(raw){const d=JSON.parse(raw);state.answers=d.answers||{};state.submitted[tab]=!!d.submitted;if(d.msg)state.submittedMsgs[tab]=d.msg}
+    else state.answers={};
+  }catch{state.answers={}}
+}
+function saveTab(tab){
+  const msg=rand(COACH[`submitted_${tab}`]);
+  localStorage.setItem(skey(tab),JSON.stringify({answers:state.answers,submitted:true,msg,ts:new Date().toISOString()}));
+  state.submitted[tab]=true;state.submittedMsgs[tab]=msg;
+}
+function loadHistory(){
+  state.history=[];
+  for(let i=0;i<14;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const key=d.toISOString().split("T")[0];
+    const day={date:key};let has=false;
+    for(const t of["morning","midday","evening"]){
+      try{const r=localStorage.getItem(`brad_v3_${key}_${t}`);if(r){day[t]=JSON.parse(r);has=true}}catch{}
+    }
+    if(has)state.history.push(day);
+  }
+}
+function setTab(tab){state.tab=tab;loadTab(tab);render()}
+function setMode(m){state.mode=m;if(m==="history")loadHistory();render()}
+function setAnswer(id,val){state.answers[id]=val;render()}
+function submit(){saveTab(state.tab);render()}
+function editTab(){state.submitted[state.tab]=false;render()}
+function dismissInstall(){localStorage.setItem("brad_install_dismissed","1");state.showInstall=false;render()}
+function exportCSV(){
+  const rows=[["date","check_in","field","value"]];
+  for(let i=0;i<60;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const key=d.toISOString().split("T")[0];
+    for(const t of["morning","midday","evening"]){
+      try{
+        const raw=localStorage.getItem(`brad_v3_${key}_${t}`);
+        if(raw){
+          const ans=JSON.parse(raw).answers||{};
+          Object.entries(ans).forEach(([f,v])=>rows.push([key,t,f,String(v).replace(/,/g,";")]));
+        }
+      }catch{}
+    }
+  }
+  if(rows.length===1){alert("No data logged yet.");return}
+  const csv=rows.map(r=>r.join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=`brad-journal-${getTodayKey()}.csv`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function rSlider(q,accent){
+  const val=state.answers[q.id];
+  const pct=((val??5)-1)/9*100;
+  const disp=val!==undefined?`<span style="color:${accent}">${val}</span><span class="denom">/ 10</span>`:`<span class="empty">—</span>`;
+  return`<div class="slider-val">${disp}</div>
+    <input type="range" min="1" max="10" value="${val??5}"
+      style="--accent:${accent};background:linear-gradient(to right,${accent} ${pct}%,#E0D5C5 ${pct}%)"
+      oninput="setAnswer('${q.id}',+this.value)">
+    <div class="slider-labels"><span>${q.lo}</span><span>${q.hi}</span></div>`;
+}
+function rNumber(q,accent){
+  const val=state.answers[q.id];
+  return`<div class="num-wrap">
+    <input class="num-input" type="number" min="0" max="${q.max??9999}" step="${q.step??1}"
+      value="${val??""}" placeholder="—"
+      style="border-bottom-color:${val!==undefined?accent:"#D4C4B0"}"
+      oninput="setAnswer('${q.id}',this.value===''?undefined:+this.value)">
+    ${q.unit?`<span class="num-unit">${q.unit}</span>`:""}
+  </div>`;
+}
+function rText(q,accent){
+  const val=(state.answers[q.id]??"").replace(/"/g,"&quot;");
+  return`<input class="text-input" type="text" value="${val}" placeholder="${q.ph??""}"
+    style="border-bottom-color:${state.answers[q.id]?accent:"#D4C4B0"}"
+    oninput="setAnswer('${q.id}',this.value)">`;
+}
+function rBool(q,accent){
+  const val=state.answers[q.id];
+  const yS=val===true?`background:${accent};border-color:${accent};color:#fff`:"";
+  const nS=val===false?`background:${accent};border-color:${accent};color:#fff`:"";
+  return`<div class="bool-wrap">
+    <button class="bool-btn" style="${yS}" onclick="setAnswer('${q.id}',true)">Yes</button>
+    <button class="bool-btn" style="${nS}" onclick="setAnswer('${q.id}',false)">No</button>
+  </div>`;
+}
+function rQuestion(q,i,total,accent){
+  if(q.cond&&state.answers[q.cond]!==true)return"";
+  let inp="";
+  if(q.type==="slider")inp=rSlider(q,accent);
+  else if(q.type==="number")inp=rNumber(q,accent);
+  else if(q.type==="text")inp=rText(q,accent);
+  else if(q.type==="bool")inp=rBool(q,accent);
+  return`<div class="qcard" style="animation-delay:${i*0.05}s">
+    <div class="qcard-num">${i+1}/${total}</div>
+    <div class="qlabel">${q.label}${q.optional?'<span class="qlabel-opt">optional</span>':""}</div>
+    ${inp}
+  </div>`;
+}
+function rSubmitted(tab){
+  const cfg=CHECKS[tab];
+  const rows=Object.entries(state.answers).map(([k,v])=>`<div class="log-row"><span class="log-key">${k.replace(/_/g," ")}</span><span class="log-val">${v}</span></div>`).join("");
+  return`<div class="submitted-box" style="border:1px solid ${cfg.color}50">
+    <div class="submitted-check" style="color:${cfg.color}">✓</div>
+    <div class="submitted-msg">"${state.submittedMsgs[tab]||""}"</div>
+  </div>
+  <div class="logged-header">Logged</div>${rows}
+  <button class="edit-btn" onclick="editTab()">Edit entries</button>`;
+}
+function rCheckin(){
+  const tab=state.tab,cfg=CHECKS[tab],accent=cfg.color;
+  const tabs=Object.entries(CHECKS).map(([k,v])=>`
+    <button class="tab-btn ${tab===k?`active-${k}`:""}" onclick="setTab('${k}')">
+      <span style="color:${tab===k?v.color:"#C4B09A"}">${ICONS[k]}</span>
+      <span>${v.label}</span>
+      ${state.submitted[k]?`<span style="font-size:9px;color:${v.color}">✓</span>`:""}
+    </button>`).join("");
+  const visQs=cfg.qs.filter(q=>!q.cond||state.answers[q.cond]===true);
+  const cc=tab==="midday"?"midday":tab==="evening"?"evening":"";
+  return`<div class="tabs">${tabs}</div>
+    ${!state.submitted[tab]?`<div class="coach-quote ${cc}">"${state.coachMsgs[tab]}"</div>`:""}
+    <div class="section-head">
+      <span style="color:${accent}">${ICONS[tab]}</span>
+      <div><div class="section-label" style="color:${accent}">${cfg.label}</div><div class="section-sub">${cfg.time}</div></div>
+    </div>
+    ${state.submitted[tab]?rSubmitted(tab):`${visQs.map((q,i)=>rQuestion(q,i,visQs.length,accent)).join("")}
+    <button class="submit-btn" style="background:${accent}" onclick="submit()">Log ${cfg.label} →</button>`}`;
+}
+function rHistory(){
+  if(!state.history.length)return`<div class="empty-history">Nothing logged yet.</div>`;
+  return state.history.map(day=>{
+    const entries=["morning","midday","evening"].filter(t=>day[t]).map(t=>{
+      const cfg=CHECKS[t],a=day[t]?.answers||{},pts=[];
+      if(a.sleep_hours)pts.push(`${a.sleep_hours}h sleep`);
+      if(a.sleep_quality)pts.push(`quality ${a.sleep_quality}/10`);
+      if(a.total_calories||a.calories_so_far)pts.push(`${a.total_calories||a.calories_so_far} kcal`);
+      if(a.exercise_done||a.exercise_complete)pts.push("exercised ✓");
+      if(a.work_output_day)pts.push(`work ${a.work_output_day}/10`);
+      if(a.wins)pts.push(`"${a.wins}"`);
+      return`<div class="history-entry" style="border-left:3px solid ${cfg.color}">
+        <div class="history-entry-label" style="color:${cfg.color}">${cfg.label}</div>
+        <div class="history-entry-pts">${pts.join(" · ")||"Logged"}</div>
+      </div>`;
+    }).join("");
+    return`<div class="history-day"><div class="history-date">${formatDate(day.date)}</div>${entries}</div>`;
+  }).join("");
+}
+function render(){
+  const c=Object.values(state.submitted).filter(Boolean).length;
+  document.getElementById("app").innerHTML=`
+    <div class="header">
+      <div>
+        <div class="header-date">${formatDate(getTodayKey())}</div>
+        <div class="header-title">${NAME}'s Journal</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="dots">
+          <div class="dot ${state.submitted.morning?"done-morning":""}"></div>
+          <div class="dot ${state.submitted.midday?"done-midday":""}"></div>
+          <div class="dot ${state.submitted.evening?"done-evening":""}"></div>
+          <span class="dot-count">${c}/3</span>
+        </div>
+        <button class="hbtn" onclick="exportCSV()">Export</button>
+        <button class="hbtn" onclick="setMode('${state.mode==="history"?"checkin":"history"}')">
+          ${state.mode==="history"?"Today":"Past"}
+        </button>
+      </div>
+    </div>
+    ${state.mode==="history"
+      ?`<div class="history-wrap"><div class="history-header">Past 14 Days</div>${rHistory()}</div>`
+      :`<div class="main">${rCheckin()}</div>`}
+    ${state.showInstall&&!isStandalone()?`<div class="install-bar">
+      <span>📖 Add to Home Screen for one-tap access</span>
+      <button onclick="dismissInstall()">Got it ×</button>
+    </div>`:""}`;
+}
+loadTab(state.tab);
+render();
+</script>
+</body>
+</html>
